@@ -119,8 +119,4 @@ Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICE
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## 📞 İletişim | Contact
-
-Zeynep Dilican - [@ZEYDLCN](https://github.com/ZEYDLCN)
-
-Proje Linki | Project Link: [https://github.com/ZEYDLCN/MoodMuse](https://github.com/ZEYDLCN/MoodMuse) 
+) 
