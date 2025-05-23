@@ -1,62 +1,126 @@
-# MoodMuse - Ruh Haline Göre Öneri Sistemi
+# 🎭 MoodMuse - Duygu Tabanlı Öneri Sistemi | Mood-Based Recommendation System
 
-MoodMuse, kullanıcıların ruh hallerine göre müzik ve film önerileri sunan bir web uygulamasıdır. Doğal dil işleme (NLP) teknolojileri kullanarak kullanıcının duygusal durumunu analiz eder ve buna uygun öneriler sunar.
+## 🌟 Proje Hakkında | About Project
 
-## Özellikler
+MoodMuse, kullanıcıların duygusal durumlarına göre kişiselleştirilmiş müzik ve film önerileri sunan modern bir web uygulamasıdır. OpenAI'nin güçlü NLP yeteneklerini kullanarak duygu analizi yapar ve kullanıcılara özel öneriler sunar.
 
-- Kullanıcı kayıt ve giriş sistemi
-- Ruh hali analizi (OpenAI GPT-3.5 ile)
-- Kişiselleştirilmiş müzik ve film önerileri
-- Ruh hali geçmişi görüntüleme ve filtreleme
-- Modern ve kullanıcı dostu arayüz
+MoodMuse is a modern web application that provides personalized music and movie recommendations based on users' emotional states. It performs sentiment analysis using OpenAI's powerful NLP capabilities and offers personalized suggestions to users.
 
-## Teknolojiler
+## 🛠️ Teknolojiler | Technologies
 
-- Backend: ASP.NET Core 7.0
-- Frontend: Blazor WebAssembly
-- Veritabanı: SQL Server
-- Authentication: JWT
-- NLP: OpenAI GPT-3.5
-- UI Framework: Bootstrap 5
+### Backend
+- **.NET 7.0**
+- **ASP.NET Core Web API**
+- **Entity Framework Core**
+- **OpenAI API Integration**
+- **JWT Authentication**
+- **Clean Architecture**
 
-## Kurulum
+### Frontend
+- **Blazor WebAssembly**
+- **Bootstrap 5**
+- **Custom Components**
 
-1. Projeyi klonlayın:
-```bash
-git clone https://github.com/yourusername/MoodMuse.git
+### Database
+- **SQL Server** / **MySQL** (configurable)
+
+## 🏗️ Mimari | Architecture
+
+```
+MoodMuse/
+├── MoodMuse.API/           # Web API katmanı
+├── MoodMuse.Application/   # İş mantığı ve servisler
+├── MoodMuse.Core/         # Domain modelleri ve interfaces
+├── MoodMuse.Infrastructure/# Veritabanı ve dış servisler
+└── MoodMuse.Client/       # Blazor WASM UI
 ```
 
-2. Veritabanını oluşturun:
+## ✨ Özellikler | Features
+
+- 🔐 **Kullanıcı Yönetimi | User Management**
+  - Kayıt ve Giriş | Registration and Login
+  - JWT bazlı kimlik doğrulama | JWT-based authentication
+
+- 🎯 **Duygu Analizi | Sentiment Analysis**
+  - OpenAI entegrasyonu | OpenAI integration
+  - Gerçek zamanlı analiz | Real-time analysis
+
+- 🎵 **Müzik Önerileri | Music Recommendations**
+  - Duygu bazlı öneriler | Mood-based suggestions
+  - Spotify bağlantıları | Spotify links
+
+- 🎬 **Film Önerileri | Movie Recommendations**
+  - Duygu uyumlu filmler | Mood-matching movies
+  - IMDB bağlantıları | IMDB links
+
+- 📊 **Duygu Geçmişi | Mood History**
+  - Geçmiş kayıtları | Historical records
+  - Duygu trendleri | Emotion trends
+
+## 🚀 Kurulum | Installation
+
+1. Repository'yi klonlayın | Clone the repository:
 ```bash
-cd MoodMuse
+git clone https://github.com/ZEYDLCN/MoodMuse.git
+```
+
+2. Gerekli paketleri yükleyin | Install dependencies:
+```bash
+dotnet restore
+```
+
+3. Veritabanını oluşturun | Create database:
+```bash
+cd MoodMuse.API
 dotnet ef database update
 ```
 
-3. API anahtarlarını ayarlayın:
-- `MoodMuse.API/appsettings.json` dosyasında OpenAI API anahtarınızı ekleyin
-- JWT secret key'i güncelleyin
-
-4. Projeyi çalıştırın:
+4. API'yi başlatın | Start the API:
 ```bash
-dotnet run --project MoodMuse.API
-dotnet run --project MoodMuse.Client
+dotnet run
 ```
 
-## Kullanım
+5. Client'ı başlatın | Start the client:
+```bash
+cd ../MoodMuse.Client
+dotnet run
+```
 
-1. Kayıt olun veya giriş yapın
-2. Ana sayfada duygularınızı yazın
-3. Sistem duygu analizini yapacak ve size öneriler sunacak
-4. Geçmiş sayfasından önceki ruh hallerinizi görüntüleyebilirsiniz
+## ⚙️ Yapılandırma | Configuration
 
-## Katkıda Bulunma
+`appsettings.json` dosyasında aşağıdaki ayarları yapın | Configure the following in appsettings.json:
 
-1. Fork edin
-2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
-3. Değişikliklerinizi commit edin (`git commit -m 'Add some amazing feature'`)
-4. Branch'inizi push edin (`git push origin feature/amazing-feature`)
-5. Pull Request oluşturun
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "your_database_connection_string"
+  },
+  "JwtSettings": {
+    "Secret": "your_jwt_secret_key",
+    "ExpirationInMinutes": 60
+  },
+  "OpenAI": {
+    "ApiKey": "your_openai_api_key"
+  }
+}
+```
 
-## Lisans
+## 🤝 Katkıda Bulunma | Contributing
 
-Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için `LICENSE` dosyasına bakın. 
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 Lisans | License
+
+Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICENSE) dosyasına bakın.
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## 📞 İletişim | Contact
+
+Zeynep Dilican - [@ZEYDLCN](https://github.com/ZEYDLCN)
+
+Proje Linki | Project Link: [https://github.com/ZEYDLCN/MoodMuse](https://github.com/ZEYDLCN/MoodMuse) 
