@@ -1,0 +1,129 @@
+﻿@page "/"
+@using MoodMuse.Client.Services
+@inject MoodApiService MoodApi // Oluşturduğumuz servisi enjekte et
+@inject NavigationManager Navigation // Sayfa yönlendirmesi için (şimdilik gerekmeyebilir)
+
+<PageTitle>My Mood Today</PageTitle>
+
+<h1>Enter Your Mood</h1>
+
+<div class="card">
+    <div class="card-body">
+        <EditForm Model="@moodInput" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator /> @* Eğer moodInput modelinde validasyon attribute'ları kullanırsak *@
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label for="moodText" class="form-label">How are you feeling today?</label>
+                <InputTextArea id="moodText" @bind-Value="moodInput.Text" class="form-control" rows="4" />
+                <ValidationMessage For="@(() => moodInput.Text)" />
+            </div>
+
+            <button type="submit" class="btn btn-primary" disabled="@isProcessing">
+                @if (isProcessing)
+                {
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <span> Processing...</span>
+                }
+                else
+                {
+                    <span>Submit Mood</span>
+                }
+            </button>
+        </EditForm>
+    </div>
+</div>
+
+@if (apiResponse != null)
+{
+    <div class="mt-4">
+        <h3>Analysis Result:</h3>
+        @if (apiResponse.MoodEntry != null)
+        {
+            <p><strong>Detected Emotion:</strong> @apiResponse.MoodEntry.DetectedEmotion</p>
+            <p><em>Your entry: "@apiResponse.MoodEntry.Text" has been saved.</em></p>
+        }
+
+        @if (apiResponse.MusicRecommendations != null && apiResponse.MusicRecommendations.Any())
+        {
+            <h4>Music Just For You:</h4>
+            <ul>
+                @foreach (var music in apiResponse.MusicRecommendations)
+                {
+                    <li>@music.TrackName - @music.Artist</li>
+                }
+            </ul>
+        }
+
+        @if (apiResponse.MovieRecommendations != null && apiResponse.MovieRecommendations.Any())
+        {
+            <h4>Movie Suggestions:</h4>
+            <ul>
+                @foreach (var movie in apiResponse.MovieRecommendations)
+                {
+                    <li>@movie.Title (@movie.Year) - <a href="https://www.imdb.com/title/@movie.IMDBLink" target="_blank">IMDB</a></li>
+                }
+            </ul>
+        }
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div class="alert alert-danger mt-3" role="alert">
+        @errorMessage
+    </div>
+}
+
+
+@code {
+    private MoodInputModel moodInput = new MoodInputModel();
+    private MoodAnalysisResultClientDto? apiResponse; // API'den dönen cevabı tutmak için
+    private string? errorMessage;
+    private bool isProcessing = false;
+
+    // Form için basit bir model
+    public class MoodInputModel
+    {
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Please tell us how you feel.")]
+        [System.ComponentModel.DataAnnotations.MinLength(5, ErrorMessage = "Please describe your mood a bit more (at least 5 characters).")]
+        public string? Text { get; set; }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        isProcessing = true;
+        errorMessage = null;
+        apiResponse = null; // Önceki cevabı temizle
+
+        if (string.IsNullOrWhiteSpace(moodInput.Text))
+        {
+            errorMessage = "Mood text cannot be empty."; // Bu aslında Required attribute'u ile yakalanmalı
+            isProcessing = false;
+            return;
+        }
+
+        try
+        {
+            apiResponse = await MoodApi.CreateMoodEntryAsync(moodInput.Text);
+            if (apiResponse == null)
+            {
+                errorMessage = "Could not get a response from the server. Please try again.";
+            }
+            else
+            {
+                // Başarılı, moodInput'u temizleyebiliriz veya başka bir işlem yapabiliriz
+                moodInput = new MoodInputModel(); // Formu temizle
+            }
+        }
+        catch (Exception ex)
+        {
+            // Gerçek uygulamada bu hata loglanmalı
+            errorMessage = $"An error occurred: {ex.Message}";
+        }
+        finally
+        {
+            isProcessing = false;
+        }
+    }
+}

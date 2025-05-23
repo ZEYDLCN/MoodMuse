@@ -1,0 +1,24 @@
+﻿version: '3.8'
+
+services:
+  postgres_moodmuse:
+    image: postgres:15
+    container_name: moodmuse_postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: zeyd # Kullanıcı adın (appsettings.json ile aynı olmalı)
+      POSTGRES_PASSWORD: zeyd1907 # Şifren (appsettings.json ile aynı olmalı ve GÜÇLÜ OLMALI)
+      POSTGRES_DB: MoodMuseDb # Veritabanı adı (appsettings.json ile aynı olmalı)
+    ports:
+      - "5433:5432" # Yerel port:container portu. Eğer 5432 yerelde meşgulse, örn: "5433:5432" yapıp appsettings.json'daki portu da 5433 yap.
+    volumes:
+      - postgres_moodmuse_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zeyd -d MoodMuseDb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_moodmuse_data:
+    driver: local

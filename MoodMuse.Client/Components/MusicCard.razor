@@ -1,0 +1,20 @@
+@using MoodMuse.Core.Models
+
+<div class="card music-card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">@Music.Title</h5>
+        <h6 class="card-subtitle mb-2 text-muted">@Music.Artist</h6>
+        <p class="card-text">@Music.Description</p>
+        @if (!string.IsNullOrEmpty(Music.SpotifyUrl))
+        {
+            <a href="@Music.SpotifyUrl" target="_blank" class="btn btn-success">
+                <i class="bi bi-spotify"></i> Spotify'da Dinle
+            </a>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public MusicRecommendation Music { get; set; }
+} 

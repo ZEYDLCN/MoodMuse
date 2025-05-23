@@ -1,0 +1,65 @@
+@page "/register"
+@using MoodMuse.Application.DTOs
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title text-center">Kayıt Ol</h3>
+                <EditForm Model="@registerModel" OnValidSubmit="HandleRegistration">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="form-group mb-3">
+                        <label for="username">Kullanıcı Adı</label>
+                        <InputText id="username" class="form-control" @bind-Value="registerModel.Username" />
+                        <ValidationMessage For="@(() => registerModel.Username)" />
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="email">Email</label>
+                        <InputText id="email" class="form-control" @bind-Value="registerModel.Email" />
+                        <ValidationMessage For="@(() => registerModel.Email)" />
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="password">Şifre</label>
+                        <InputText type="password" id="password" class="form-control" @bind-Value="registerModel.Password" />
+                        <ValidationMessage For="@(() => registerModel.Password)" />
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Kayıt Ol</button>
+                    </div>
+                </EditForm>
+
+                @if (!string.IsNullOrEmpty(error))
+                {
+                    <div class="alert alert-danger mt-3">
+                        @error
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private RegisterUserDto registerModel = new RegisterUserDto("", "", "");
+    private string error;
+
+    private async Task HandleRegistration()
+    {
+        try
+        {
+            await AuthService.RegisterAsync(registerModel);
+            NavigationManager.NavigateTo("/login");
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+} 

@@ -1,0 +1,20 @@
+@using MoodMuse.Core.Models
+
+<div class="card movie-card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">@Movie.Title</h5>
+        <h6 class="card-subtitle mb-2 text-muted">@Movie.Year</h6>
+        <p class="card-text">@Movie.Description</p>
+        @if (!string.IsNullOrEmpty(Movie.ImdbUrl))
+        {
+            <a href="@Movie.ImdbUrl" target="_blank" class="btn btn-warning">
+                <i class="bi bi-film"></i> IMDB'de Gör
+            </a>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public MovieRecommendation Movie { get; set; }
+} 

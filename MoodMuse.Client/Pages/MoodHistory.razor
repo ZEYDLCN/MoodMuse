@@ -1,0 +1,105 @@
+@page "/mood-history"
+@using MoodMuse.Application.DTOs
+@using MoodMuse.Application.Interfaces
+@inject IMoodService MoodService
+@attribute [Authorize]
+
+<h3>Ruh Hali Geçmişi</h3>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="moodFilter" class="form-label">Duygu Filtresi</label>
+                    <select class="form-select" id="moodFilter" @bind="selectedMood">
+                        <option value="">Tümü</option>
+                        <option value="mutlu">Mutlu</option>
+                        <option value="üzgün">Üzgün</option>
+                        <option value="kızgın">Kızgın</option>
+                        <option value="heyecanlı">Heyecanlı</option>
+                        <option value="endişeli">Endişeli</option>
+                        <option value="sakin">Sakin</option>
+                    </select>
+                </div>
+
+                @if (moodHistory == null)
+                {
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Yükleniyor...</span>
+                        </div>
+                    </div>
+                }
+                else if (!moodHistory.Any())
+                {
+                    <div class="alert alert-info">
+                        Henüz kaydedilmiş ruh hali bulunmuyor.
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Tarih</th>
+                                    <th>Metin</th>
+                                    <th>Duygu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var mood in FilteredMoodHistory)
+                                {
+                                    <tr>
+                                        <td>@mood.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td>@mood.Text</td>
+                                        <td>
+                                            <span class="badge bg-@GetMoodColor(mood.Sentiment)">
+                                                @mood.Sentiment
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private IEnumerable<MoodEntryDto> moodHistory;
+    private string selectedMood = "";
+
+    private IEnumerable<MoodEntryDto> FilteredMoodHistory =>
+        string.IsNullOrEmpty(selectedMood)
+            ? moodHistory
+            : moodHistory.Where(m => m.Sentiment.ToLower() == selectedMood.ToLower());
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            moodHistory = await MoodService.GetUserMoodHistoryAsync();
+        }
+        catch (Exception ex)
+        {
+            // TODO: Hata yönetimi
+            Console.WriteLine(ex);
+        }
+    }
+
+    private string GetMoodColor(string sentiment) => sentiment.ToLower() switch
+    {
+        "mutlu" => "success",
+        "üzgün" => "secondary",
+        "kızgın" => "danger",
+        "heyecanlı" => "primary",
+        "endişeli" => "warning",
+        "sakin" => "info",
+        _ => "light"
+    };
+} 

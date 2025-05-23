@@ -1,0 +1,77 @@
+@page "/dashboard"
+@using MoodMuse.Core.Models
+@using MoodMuse.Application.DTOs
+@using MoodMuse.Application.Interfaces
+@using MoodMuse.Client.Components
+@inject IMoodService MoodService
+@attribute [Authorize]
+
+<h3>Ruh Haliniz İçin Öneriler</h3>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="mood-input">
+            <div class="form-group">
+                <label for="moodText">Nasıl hissediyorsunuz?</label>
+                <textarea @bind="moodText" class="form-control" id="moodText" rows="3"></textarea>
+            </div>
+            <button class="btn btn-primary mt-2" @onclick="AnalyzeMood">Analiz Et</button>
+        </div>
+    </div>
+</div>
+
+@if (isLoading)
+{
+    <div class="text-center mt-4">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Yükleniyor...</span>
+        </div>
+    </div>
+}
+
+@if (recommendations != null)
+{
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h4>Müzik Önerileri</h4>
+            @foreach (var music in recommendations.MusicRecommendations)
+            {
+                <MusicCard Music="music" />
+            }
+        </div>
+        <div class="col-md-6">
+            <h4>Film Önerileri</h4>
+            @foreach (var movie in recommendations.MovieRecommendations)
+            {
+                <MovieCard Movie="movie" />
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private string moodText = "";
+    private bool isLoading = false;
+    private RecommendationResponse recommendations;
+
+    private async Task AnalyzeMood()
+    {
+        if (string.IsNullOrWhiteSpace(moodText))
+            return;
+
+        isLoading = true;
+        try
+        {
+            recommendations = await MoodService.GetRecommendationsAsync(moodText);
+        }
+        catch (Exception ex)
+        {
+            // TODO: Hata yönetimi eklenecek
+            Console.WriteLine(ex);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+} 
